@@ -1,8 +1,8 @@
 // src-tauri/src/liquipedia/api.rs
-// Rate-limited MediaWiki client for liquipedia.net/starcraft. Mirrors
-// src/main/liquipedia/api.ts: a settings-driven User-Agent + post-request
-// delay, plus helpers for fetching page wikitext, walking categories, and
-// batching revision lookups.
+// Rate-limited MediaWiki client for liquipedia.net/starcraft: a
+// settings-driven User-Agent + post-request delay, plus helpers for
+// fetching page wikitext, walking categories, and batching revision
+// lookups.
 
 use crate::storage::DEFAULT_USER_AGENT;
 use crate::types::Settings;

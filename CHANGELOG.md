@@ -35,7 +35,13 @@ When `npm run release:patch|minor|major` is run, the last `## [Unreleased]` head
 
 ## [Unreleased]
 
-_No unreleased changes yet._
+### Changed
+
+- When a Liquipedia import yields no parsed `{{build}}` steps, the placeholder overlay step is now plain-language guidance instead of developer-style wording.
+
+### Fixed
+
+- Removed a stale `src/main/` path mention from the Liquipedia API module header comment (no behavior change).
 
 ## [1.0.0] - 2026-05-01
 
