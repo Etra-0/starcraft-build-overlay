@@ -1,0 +1,16 @@
+node_modules/
+build/
+dist/
+dist-frontend/
+cache/
+*.log
+.env
+.DS_Store
+.git-commit-msg.tmp
+
+src-tauri/target/
+src-tauri/gen/schemas/
+
+# Per-developer Cursor IDE state (rules, settings, chat metadata).
+# Each contributor brings their own; nothing in here is project policy.
+.cursor/

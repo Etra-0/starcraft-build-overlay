@@ -1,0 +1,33 @@
+name: Feature request
+description: Suggest a new feature or improvement.
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What's the problem this solves?
+      description: Describe the use case. What are you trying to do today, and what's awkward about it?
+      placeholder: When I'm in a PvT, I want ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: How would you like the overlay to behave?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you considered
+      description: Other approaches, workarounds, or "out of scope" ideas.
+
+  - type: textarea
+    id: extras
+    attributes:
+      label: Anything else?
+      description: Mockups, related tools, links to similar features in other apps.

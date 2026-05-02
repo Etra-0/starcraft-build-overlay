@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="BW Build Overlay">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#243d68"/>
+      <stop offset="55%"  stop-color="#10192a"/>
+      <stop offset="100%" stop-color="#070b14"/>
+    </linearGradient>
+    <linearGradient id="bw" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%"   stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#bcdcff"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Flat-top hex centered at (128,128), radius 116 -->
+  <path d="M186 27.5 L244 128 L186 228.5 L70 228.5 L12 128 L70 27.5 Z"
+        fill="url(#bg)"
+        stroke="#9ec5ff" stroke-opacity="0.30" stroke-width="2"/>
+
+  <!-- Inner inset rim - softens the silhouette without adding small detail -->
+  <path d="M178 47 L222 128 L178 209 L78 209 L34 128 L78 47 Z"
+        fill="none"
+        stroke="#9ec5ff" stroke-opacity="0.10" stroke-width="1"/>
+
+  <!-- BW monogram, centered, heavy weight so it survives at 16 px -->
+  <text x="128" y="158"
+        text-anchor="middle"
+        font-family="Segoe UI, Arial, sans-serif"
+        font-weight="900"
+        font-size="118"
+        letter-spacing="-4"
+        fill="url(#bw)">BW</text>
+
+  <!-- Three race-color accent bars, centered just above the bottom edge.
+       At 16 px they blur into a single faint band; at 256 px they read clearly. -->
+  <g transform="translate(72, 188)">
+    <rect x="0"  y="0" width="32" height="6" rx="2" fill="#ff8c66"/> <!-- Terran  -->
+    <rect x="40" y="0" width="32" height="6" rx="2" fill="#a9d2ff"/> <!-- Protoss -->
+    <rect x="80" y="0" width="32" height="6" rx="2" fill="#c79bff"/> <!-- Zerg    -->
+  </g>
+</svg>

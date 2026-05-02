@@ -1,0 +1,13 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Permissions for the BW Build Overlay main window.",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "shell:default",
+    "opener:default",
+    "opener:allow-open-url",
+    "global-shortcut:default"
+  ]
+}
