@@ -1,0 +1,70 @@
+name: Bug report
+description: Something is broken or behaving unexpectedly in the overlay.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug. Please fill in as much as you can - the more
+        details you provide the faster I can reproduce and fix.
+
+  - type: input
+    id: app-version
+    attributes:
+      label: App version
+      description: From the app title bar / About dialog, e.g. v1.0.0
+      placeholder: v1.0.0
+    validations:
+      required: true
+
+  - type: input
+    id: os-version
+    attributes:
+      label: Windows version
+      description: Run `winver` and paste the version + build, e.g. Windows 11 24H2 (Build 26100.2161)
+      placeholder: Windows 11 24H2 (Build 26100.2161)
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear description of the problem.
+      placeholder: When I press Ctrl+Alt+T while playing, the overlay...
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Numbered steps so I can hit the same path you did.
+      placeholder: |
+        1. Open the overlay
+        2. Click ...
+        3. Observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+      placeholder: I expected the overlay to ...
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / DevTools output
+      description: |
+        Press F12 in the overlay window to open DevTools, copy any red errors.
+        Optional but very helpful.
+      render: shell
+
+  - type: textarea
+    id: extras
+    attributes:
+      label: Anything else?
+      description: Screenshots, related builds, custom hotkeys, etc.

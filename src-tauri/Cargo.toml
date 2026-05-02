@@ -1,0 +1,59 @@
+[package]
+name = "bw-build-overlay"
+version = "1.0.0"
+description = "Always-on-top StarCraft: Brood War / Remastered build-order overlay."
+authors = ["Etra-0"]
+license = "MIT"
+repository = "https://github.com/Etra-0/starcraft-build-overlay"
+edition = "2021"
+rust-version = "1.85"
+
+[lib]
+name = "bw_build_overlay_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["devtools"] }
+tauri-plugin-shell = "2"
+tauri-plugin-opener = "2"
+tauri-plugin-global-shortcut = "2"
+
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["fs", "time", "rt-multi-thread", "sync", "macros"] }
+reqwest = { version = "0.12", default-features = false, features = ["json", "gzip", "rustls-tls"] }
+regex = "1"
+chrono = { version = "0.4", default-features = false, features = ["clock", "serde"] }
+thiserror = "2"
+url = "2"
+log = "0.4"
+
+[target.'cfg(target_os = "windows")'.dependencies]
+windows-sys = { version = "0.59", features = [
+  "Win32_Foundation",
+  "Win32_UI_WindowsAndMessaging",
+  "Win32_Graphics_Gdi"
+] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+objc = "0.2"
+
+# Tauri 2 returns `gtk::ApplicationWindow` from `WebviewWindow::gtk_window()`,
+# but does not re-export the `gtk` crate publicly. Pinning 0.18 matches the
+# version in tauri 2.x's transitive tree so the WidgetExt::set_opacity import
+# below resolves to the same gtk types Tauri itself uses.
+[target.'cfg(target_os = "linux")'.dependencies]
+gtk = "0.18"
+
+[dev-dependencies]
+tempfile = "3"
+
+[profile.release]
+panic = "abort"
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true

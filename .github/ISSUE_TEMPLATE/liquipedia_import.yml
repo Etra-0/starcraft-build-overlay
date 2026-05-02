@@ -1,0 +1,50 @@
+name: Liquipedia import issue
+description: A specific Liquipedia page failed to import or parsed incorrectly.
+title: "[Import] "
+labels: ["liquipedia", "bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this for problems with a specific Liquipedia page only - if the issue is
+        more general (rate limit errors, settings, etc.) please file a regular bug instead.
+
+  - type: input
+    id: page-url
+    attributes:
+      label: Liquipedia page URL
+      placeholder: https://liquipedia.net/starcraft/...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: import-mode
+    attributes:
+      label: Import mode
+      options:
+        - Single page (Preview)
+        - Single page (Import now)
+        - Bulk import - common builds
+        - Bulk import - all builds
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What went wrong?
+      description: Did the import fail entirely, or did it succeed but produce a wrong/incomplete build?
+    validations:
+      required: true
+
+  - type: textarea
+    id: log
+    attributes:
+      label: Import log output
+      description: Copy from the Manage > Import log box.
+      render: text
+
+  - type: textarea
+    id: extras
+    attributes:
+      label: Anything else?

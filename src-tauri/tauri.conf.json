@@ -1,0 +1,56 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "BW Build Overlay",
+  "version": "1.0.0",
+  "identifier": "com.local.bwbuildoverlay",
+  "build": {
+    "frontendDist": "../dist-frontend",
+    "beforeBuildCommand": "npm run build:renderer"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "BW Build Overlay",
+        "width": 480,
+        "height": 760,
+        "minWidth": 380,
+        "minHeight": 420,
+        "alwaysOnTop": true,
+        "decorations": true,
+        "transparent": false,
+        "resizable": true,
+        "skipTaskbar": false,
+        "backgroundColor": "#0b1018",
+        "visible": false
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self' ipc: http://ipc.localhost; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: asset: http://asset.localhost;"
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis", "msi", "app", "dmg", "appimage", "deb"],
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "resources": {
+      "../data/builds.json": "data/builds.json"
+    },
+    "windows": {
+      "webviewInstallMode": {
+        "type": "embedBootstrapper"
+      }
+    },
+    "shortDescription": "Always-on-top StarCraft: Brood War / Remastered build-order overlay with Liquipedia importer.",
+    "longDescription": "An always-on-top desktop overlay that shows StarCraft: Brood War / Remastered build orders for all races and matchups, with a built-in Liquipedia importer and update scanner.",
+    "homepage": "https://github.com/Etra-0/starcraft-build-overlay",
+    "category": "Utility",
+    "copyright": "Copyright (c) 2024-2026 Etra-0"
+  }
+}

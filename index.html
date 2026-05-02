@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BW Build Overlay</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body data-race="Protoss">
+    <main id="app" class="overlay">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <img src="./assets/icon.png" alt="" />
+          </div>
+          <div>
+            <div class="eyebrow">BW Build Overlay</div>
+            <div id="overlayStatus" class="status-line">Always on top</div>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <button
+            id="updatesBadgeButton"
+            class="icon-button"
+            title="Pending Liquipedia updates"
+            hidden
+          >
+            <span class="dot"></span>
+          </button>
+          <button id="favoriteButton" class="icon-button" title="Toggle favorite (Ctrl+Alt+F)">
+            &#9734;
+          </button>
+          <button id="compactButton" class="icon-button" title="Toggle compact mode (Ctrl+Alt+C)">
+            &#9633;
+          </button>
+          <button id="manageButton" class="small-button">Manage</button>
+        </div>
+      </header>
+
+      <section class="race-tabs" role="tablist" aria-label="Player race">
+        <button class="race-tab" data-race="Terran" role="tab">Terran</button>
+        <button class="race-tab" data-race="Protoss" role="tab">Protoss</button>
+        <button class="race-tab" data-race="Zerg" role="tab">Zerg</button>
+      </section>
+
+      <section class="opponent-chips" role="tablist" aria-label="Opponent">
+        <button class="opp-chip" data-opp="Terran" role="tab">vT</button>
+        <button class="opp-chip" data-opp="Zerg" role="tab">vZ</button>
+        <button class="opp-chip" data-opp="Protoss" role="tab">vP</button>
+        <button class="opp-chip" data-opp="Random" role="tab">vR</button>
+      </section>
+
+      <section class="build-picker">
+        <div class="search-row">
+          <input id="buildSearch" type="search" placeholder="Search builds (press / to focus)" />
+        </div>
+        <div class="build-row">
+          <select id="buildSelect"></select>
+          <button
+            id="prevBuildButton"
+            class="icon-button"
+            title="Previous build (Ctrl+Alt+Shift+B)"
+          >
+            &#8592;
+          </button>
+          <button id="nextBuildButton" class="icon-button" title="Next build (Ctrl+Alt+B)">
+            &#8594;
+          </button>
+        </div>
+      </section>
+
+      <section class="build-card" id="buildCard">
+        <div class="build-head">
+          <div class="build-head-text">
+            <h1 id="buildName">Loading...</h1>
+            <div class="meta-row">
+              <span id="matchupChip" class="chip"></span>
+              <span id="difficultyChip" class="chip subtle" hidden></span>
+              <span id="favoritedChip" class="chip subtle" hidden>&#9733; Favorite</span>
+              <span id="updateChip" class="chip subtle update-chip" hidden>Update available</span>
+            </div>
+            <div id="buildTags" class="tags"></div>
+          </div>
+          <div class="head-actions">
+            <button id="sourceButton" class="small-button">Source</button>
+          </div>
+        </div>
+
+        <p id="buildNotes" class="notes" hidden></p>
+        <p id="buildUserNotes" class="notes user-notes" hidden></p>
+
+        <ol id="steps" class="steps"></ol>
+
+        <div class="counters" id="countersBlock" hidden>
+          <div class="counter-row">
+            <span class="counter-label">Counters:</span>
+            <span id="countersList"></span>
+          </div>
+          <div class="counter-row">
+            <span class="counter-label">Countered by:</span>
+            <span id="counteredByList"></span>
+          </div>
+        </div>
+
+        <div class="footer">
+          <button id="prevPageButton" class="icon-button" title="Previous page (Ctrl+Alt+PgUp)">
+            &#8592;
+          </button>
+          <span id="pageIndicator" class="page-indicator">Page 1 / 1</span>
+          <button id="nextPageButton" class="icon-button" title="Next page (Ctrl+Alt+PgDn)">
+            &#8594;
+          </button>
+        </div>
+      </section>
+
+      <section class="hotkeys" id="hotkeysHelp">
+        <div class="hk-grid">
+          <div><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>1</kbd>/<kbd>2</kbd>/<kbd>3</kbd> race</div>
+          <div>
+            <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>Q</kbd>/<kbd>W</kbd>/<kbd>E</kbd>/<kbd>R</kbd>
+            opponent
+          </div>
+          <div><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>B</kbd> next build</div>
+          <div><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>PgDn</kbd>/<kbd>PgUp</kbd> page</div>
+          <div><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>F</kbd> favorite</div>
+          <div><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>H</kbd> hide</div>
+        </div>
+      </section>
+    </main>
+
+    <div id="toasts" class="toast-stack" aria-live="polite"></div>
+
+    <dialog id="managerDialog" class="manager-dialog">
+      <div class="manager-shell">
+        <header class="manager-header">
+          <div>
+            <h2>Build Manager</h2>
+            <p>Add, edit, import, update, and back up your build orders.</p>
+          </div>
+          <button id="managerCloseButton" class="icon-button">&times;</button>
+        </header>
+
+        <section class="manager-grid">
+          <aside class="build-list-panel">
+            <div class="filter-row">
+              <select id="managerRaceFilter" title="Player race">
+                <option value="All">All races</option>
+                <option value="Terran">Terran</option>
+                <option value="Protoss">Protoss</option>
+                <option value="Zerg">Zerg</option>
+              </select>
+              <select id="managerMatchupFilter" title="Matchup">
+                <option value="All">All matchups</option>
+              </select>
+            </div>
+            <input id="managerSearch" type="search" placeholder="Search by name, tag" />
+
+            <div id="managerBuildList" class="manager-build-list"></div>
+            <div id="managerEmptyState" class="empty-state" hidden>
+              No builds match these filters.
+            </div>
+
+            <div class="stack">
+              <button id="newBuildButton">New manual build</button>
+              <button id="duplicateBuildButton">Duplicate selected</button>
+              <button id="deleteBuildButton" class="danger-button">Delete selected</button>
+              <button id="backupButton">Backup builds.json</button>
+              <button id="openDataFolderButton">Open data folder</button>
+            </div>
+          </aside>
+
+          <section class="editor-panel">
+            <div class="tabs">
+              <button id="editTabButton" class="tab active">Edit</button>
+              <button id="importTabButton" class="tab">Import</button>
+              <button id="updatesTabButton" class="tab">Updates</button>
+              <button id="settingsTabButton" class="tab">Settings</button>
+            </div>
+
+            <div id="editTab" class="tab-panel active">
+              <div class="form-grid two">
+                <label>
+                  Name
+                  <input id="formName" />
+                </label>
+                <label>
+                  Difficulty
+                  <select id="formDifficulty">
+                    <option value="">Unspecified</option>
+                    <option value="beginner">Beginner</option>
+                    <option value="intermediate">Intermediate</option>
+                    <option value="advanced">Advanced</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="form-grid two">
+                <label>
+                  Player race
+                  <select id="formRace">
+                    <option value="Terran">Terran</option>
+                    <option value="Protoss">Protoss</option>
+                    <option value="Zerg">Zerg</option>
+                  </select>
+                </label>
+                <label>
+                  Opponent
+                  <select id="formOpponent">
+                    <option value="Terran">Terran</option>
+                    <option value="Zerg">Zerg</option>
+                    <option value="Protoss">Protoss</option>
+                    <option value="Random">Random</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="form-grid two">
+                <label>
+                  ID
+                  <input id="formId" />
+                </label>
+                <label>
+                  Tags (comma separated)
+                  <input id="formTags" />
+                </label>
+              </div>
+
+              <div class="form-grid two">
+                <label>
+                  Source name
+                  <input id="formSourceName" />
+                </label>
+                <label>
+                  Source URL
+                  <input id="formSourceUrl" />
+                </label>
+              </div>
+
+              <label>
+                Imported notes
+                <textarea id="formNotes" rows="2"></textarea>
+              </label>
+
+              <label>
+                Your notes (preserved across re-imports)
+                <textarea id="formUserNotes" rows="2"></textarea>
+              </label>
+
+              <label>
+                Steps (one per line, e.g. "8 - Pylon")
+                <textarea id="formSteps" rows="14"></textarea>
+              </label>
+
+              <label class="checkbox-row">
+                <input id="formCustomEdited" type="checkbox" />
+                Mark as custom edited - bulk imports/refreshes will skip this build
+              </label>
+              <label class="checkbox-row">
+                <input id="formFavorite" type="checkbox" />
+                Favorite this build
+              </label>
+
+              <div class="editor-actions">
+                <button id="saveBuildButton" class="primary-button">Save build</button>
+                <button id="useBuildButton">Use in overlay</button>
+                <button id="openSourceFromFormButton">Open source</button>
+              </div>
+            </div>
+
+            <div id="importTab" class="tab-panel">
+              <div class="import-card">
+                <h3>Import one Liquipedia page</h3>
+                <p>
+                  Paste a Liquipedia URL or page title. The app previews the parsed build(s) in the
+                  editor.
+                </p>
+                <label>
+                  URL or page title
+                  <input
+                    id="importInput"
+                    placeholder="https://liquipedia.net/starcraft/3_Gate_Robo_(vs._Protoss)"
+                  />
+                </label>
+                <div class="button-row">
+                  <button id="previewImportButton">Preview</button>
+                  <button id="importNowButton">Import directly</button>
+                </div>
+              </div>
+
+              <div class="import-card">
+                <h3>Bulk import from Liquipedia</h3>
+                <p>
+                  <strong>Common</strong> imports a curated subset (faster).
+                  <strong>All</strong> walks every build category (slower because of rate limits).
+                </p>
+                <div class="button-row checkbox-row">
+                  <label class="checkbox-row"
+                    ><input type="checkbox" data-race-bulk="Terran" checked /> Terran</label
+                  >
+                  <label class="checkbox-row"
+                    ><input type="checkbox" data-race-bulk="Protoss" checked /> Protoss</label
+                  >
+                  <label class="checkbox-row"
+                    ><input type="checkbox" data-race-bulk="Zerg" checked /> Zerg</label
+                  >
+                </div>
+                <div class="button-row">
+                  <button id="importCommonButton">Import common builds</button>
+                  <button id="importAllButton">Import all builds</button>
+                </div>
+                <label class="checkbox-row">
+                  <input id="updateExistingCheckbox" type="checkbox" />
+                  Also overwrite existing imports (still skips builds you marked custom-edited)
+                </label>
+              </div>
+
+              <div class="log-box" id="importLog"></div>
+            </div>
+
+            <div id="updatesTab" class="tab-panel">
+              <div class="import-card">
+                <h3>Check Liquipedia for updates</h3>
+                <p>Compare your imported builds against the latest revisions on Liquipedia.</p>
+                <div class="button-row">
+                  <button id="checkUpdatesButton">Check for updates now</button>
+                  <button id="refreshSelectedUpdatesButton">Refresh selected</button>
+                  <button id="refreshAllUpdatesButton" class="primary-button">
+                    Refresh all outdated
+                  </button>
+                </div>
+                <p class="muted" id="updatesSummary">No check has been run yet.</p>
+              </div>
+              <div id="updatesList" class="updates-list"></div>
+            </div>
+
+            <div id="settingsTab" class="tab-panel">
+              <div class="import-card">
+                <h3>Liquipedia API</h3>
+                <label>
+                  User-Agent (please use a contact-able string)
+                  <input id="settingsUserAgent" />
+                </label>
+                <label>
+                  Rate limit (ms between requests, &gt;= 2000)
+                  <input id="settingsRateLimit" type="number" min="2000" step="100" />
+                </label>
+                <label class="checkbox-row">
+                  <input id="settingsAutoCheck" type="checkbox" />
+                  Auto-check for updates on launch
+                </label>
+              </div>
+              <div class="import-card">
+                <h3>Overlay</h3>
+                <label class="checkbox-row">
+                  <input id="settingsCompactOverlay" type="checkbox" />
+                  Compact mode (smaller footprint, hides extras)
+                </label>
+                <label>
+                  Window opacity
+                  <input id="settingsOpacity" type="range" min="0.5" max="1" step="0.05" />
+                </label>
+                <label>
+                  Steps per page
+                  <input id="settingsPageSize" type="number" min="6" max="60" step="1" />
+                </label>
+                <label>
+                  Default player race
+                  <select id="settingsDefaultRace">
+                    <option value="Terran">Terran</option>
+                    <option value="Protoss">Protoss</option>
+                    <option value="Zerg">Zerg</option>
+                  </select>
+                </label>
+                <div class="editor-actions">
+                  <button id="saveSettingsButton" class="primary-button">Save settings</button>
+                </div>
+              </div>
+              <div class="import-card">
+                <h3>Build & distribute</h3>
+                <p>
+                  Run <code>npm run tauri:build</code> for a native installer (NSIS/MSI on Windows,
+                  .dmg on macOS, .AppImage/.deb on Linux), or <code>npm run dev</code> to launch a
+                  dev build.
+                </p>
+                <p>
+                  Data lives in your OS user-data folder. Use
+                  <strong>Backup builds.json</strong> before risky changes.
+                </p>
+              </div>
+            </div>
+          </section>
+        </section>
+      </div>
+    </dialog>
+
+    <script type="module" src="./renderer.js"></script>
+  </body>
+</html>
