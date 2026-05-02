@@ -204,7 +204,8 @@ fn build_from_variant(
     };
 
     let steps = if variant.steps.is_empty() {
-        vec!["TODO - Open Source and add steps manually".to_string()]
+        vec!["No build steps were parsed — add them manually from the Liquipedia page source or in the Build Manager."
+            .to_string()]
     } else {
         variant.steps.clone()
     };
